@@ -14,6 +14,9 @@ func Download(filePath string, urls ...string) (data []byte, err error) {
 	if err != nil {
 		return
 	}
+	if len(data) == 0 {
+		return nil, errors.New("下载内容为空")
+	}
 
 	err = common.SaveFile(filePath, data)
 	return

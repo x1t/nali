@@ -6,24 +6,18 @@ jobs:
     name: Test and Build
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '^1.21'
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
-      - name: Cache go module
-        uses: actions/cache@v3
+        uses: actions/checkout@v7
+      - name: Setup Go
+        uses: actions/setup-go@v7
         with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          go-version-file: go.mod
       - name: Get dependencies and run test
         run: |
+          go mod download
           go test ./...
       - name: Build
-        run: go build
+        run: go build -v ./...
 
   release-aur-git:
     name: Release Aur Git
@@ -32,13 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Get version
         id: version
-        run: echo ::set-output name=version::$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
+        run: echo "version=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')" >> "$GITHUB_OUTPUT"
 
       - name: Publish AUR package nali-go-git
         uses: zu1k/aur-publish-action@master

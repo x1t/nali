@@ -33,7 +33,8 @@ func GetDB(typ dbif.QueryType) (db dbif.DB) {
 		}
 
 		if lang == "zh-CN" {
-			db, err = qqwry.NewQQwry(getDbByName("qqwry").File)
+			qqwryDB := getDbByName("qqwry")
+			db, err = qqwry.NewQQwry(qqwryDB.File, qqwryDB.DownloadUrls)
 		} else {
 			db, err = geoip.NewGeoIP(getDbByName("geoip").File)
 		}
@@ -56,7 +57,8 @@ func GetDB(typ dbif.QueryType) (db dbif.DB) {
 			break
 		}
 
-		db, err = cdn.NewCDN(getDbByName("cdn").File)
+		cdnDB := getDbByName("cdn")
+		db, err = cdn.NewCDN(cdnDB.File, cdnDB.DownloadUrls)
 	default:
 		panic("Query type not supported!")
 	}

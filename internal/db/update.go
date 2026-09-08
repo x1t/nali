@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -11,27 +12,31 @@ import (
 	"github.com/zu1k/nali/pkg/zxipv6wry"
 )
 
-func UpdateDB(dbNames ...string) {
+func UpdateDB(dbNames ...string) error {
 	if len(dbNames) == 0 {
 		dbNames = DbNameListForUpdate
 	}
 
 	done := make(map[string]struct{})
+	var updateErr error
 	for _, dbName := range dbNames {
 		update, name := getUpdateFuncByName(dbName)
 		if _, found := done[name]; !found {
 			done[name] = struct{}{}
 			if err := update(); err != nil {
+				updateErr = errors.Join(updateErr, fmt.Errorf("%s: %w", dbName, err))
 				continue
 			}
 		}
 	}
+	return updateErr
 }
 
 var DbNameListForUpdate = []string{
 	"qqwry",
 	"zxipv6wry",
 	"ip2region",
+	"ip2region-ipv6",
 	"cdn",
 }
 
@@ -64,7 +69,7 @@ func getUpdateFuncByName(name string) (func() error, string) {
 					log.Printf("%s 数据库下载成功: %s\n", db.Name, db.File)
 					return nil
 				}
-			}, string(db.Format)
+			}, db.Name
 		}
 
 		// intenel download func

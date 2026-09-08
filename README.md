@@ -44,17 +44,42 @@
 
 ### 从源码安装
 
-Nali 需要预先安装 Go >= 1.19. 安装后可以从源码安装软件:
+Nali 需要预先安装 Go >= 1.26. 安装后可以从源码安装软件:
 
 ```sh
 $ go install github.com/zu1k/nali@latest
 ```
 
-### 下载预编译的可执行程序
+### 一键安装 Linux amd64/arm64
 
-可以从Release页面下载预编译好的可执行程序: [Release](https://github.com/zu1k/nali/releases)
+Release workflow 会生成 Linux `amd64` 和 `arm64` 两个预编译版本。安装脚本默认从最新正式 Release 下载，自动识别系统架构，校验下载文件后将 `nali` 安装到 `/usr/bin/nali`:
 
-你需要选择适合你系统和硬件架构的版本下载，解压后可直接运行
+```sh
+$ curl -fsSL https://raw.githubusercontent.com/x1t/nali/refs/heads/master/install.sh | sh
+```
+
+指定版本安装:
+
+```sh
+$ curl -fsSL https://raw.githubusercontent.com/x1t/nali/refs/heads/master/install.sh | sh -s -- --version vX.Y.Z
+```
+
+卸载:
+
+```sh
+$ curl -fsSL https://raw.githubusercontent.com/x1t/nali/refs/heads/master/install.sh | sh -s -- uninstall
+```
+
+### 手动下载预编译的可执行程序
+
+可以从 Release 页面下载预编译好的可执行程序: [Release](https://github.com/x1t/nali/releases)
+
+目前提供以下 Linux 资产:
+
+- `nali-linux-amd64-vX.Y.Z.gz`
+- `nali-linux-armv8-vX.Y.Z.gz`（Linux arm64）
+
+解压后即可运行。
 
 ### Arch 系 Linux
 

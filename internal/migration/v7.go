@@ -31,7 +31,8 @@ func migration2v7() {
 		if adb.Name == "qqwry" {
 			if len(adb.DownloadUrls) == 0 ||
 				adb.DownloadUrls[0] == "https://99wry.cf/qqwry.dat" ||
-				strings.Contains(adb.DownloadUrls[0], "sspanel-uim") {
+				strings.Contains(adb.DownloadUrls[0], "sspanel-uim") ||
+				strings.Contains(adb.DownloadUrls[0], "gh-release.zu1k.com") {
 				needOverwrite = true
 				adb.DownloadUrls = qqwry.DownloadUrls
 			}
