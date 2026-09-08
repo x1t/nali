@@ -14,6 +14,8 @@ jobs:
     name: Release Binary
     runs-on: ubuntu-latest
     environment: s3
+    permissions:
+      contents: write
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v7
@@ -49,8 +51,8 @@ jobs:
         with:
           files: bin/*
           tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
-          draft: true
-          prerelease: true
+          draft: false
+          prerelease: false
 
       - uses: actions/upload-artifact@v4
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
@@ -59,7 +61,7 @@ jobs:
           path: bin
 
       - name: Upload to s3
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        if: (startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch') && github.repository == 'zu1k/nali'
         run: sh .github/scripts/upload_s3.sh
         env:
           S3_BUCKET: ${{ secrets.S3_BUCKET }}
@@ -70,6 +72,7 @@ jobs:
   release-aur-bin:
     name: Release Aur bin
     needs: [release-binary]
+    if: github.repository == 'zu1k/nali'
     runs-on: ubuntu-latest
     steps:
       - name: Get version
@@ -89,6 +92,7 @@ jobs:
 
   release-aur:
     name: Release Aur
+    if: github.repository == 'zu1k/nali'
     runs-on: ubuntu-latest
     steps:
       - name: Get version
